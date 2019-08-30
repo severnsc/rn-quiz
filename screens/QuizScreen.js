@@ -1,20 +1,28 @@
 import React from "react";
 import {StyleSheet, Text, View, Button} from "react-native";
-
-// - After all questions have been answered or currentIndex is == 10, navigate to the Results Screen
-
-// count how many correct === true answeredQ's happened through the quiz
-// bring that count and render it to the results screen
+import {answeredQ} from "../redux/actions";
+import store from "../redux";
+import {connect} from "react-redux";
 
 export default class Quiz extends React.Component {
   state = {
     answeredQ: [],
     currentIndex: 0
   };
+
+  componentDidUpdate() {
+    if (this.state.currentIndex === data.results.length) {
+      // use redux to store results
+      store.dispatch(answeredQ(this.state.answeredQ));
+      // clear answered questions
+      // clear currentIndex back to 0
+      this.props.navigation.navigate("Results");
+    }
+  }
   render() {
     console.log(this.state);
 
-    return (
+    return !data.results[this.state.currentIndex] ? null : (
       <View style={styles.container}>
         <Text style={{paddingBottom: 20}}>
           {data.results[this.state.currentIndex].category}
@@ -34,15 +42,9 @@ export default class Quiz extends React.Component {
               console.log({answeredQ});
               this.setState(state => ({
                 ...state,
-                answeredQ: [...state.answeredQ, answeredQ]
+                answeredQ: [...state.answeredQ, answeredQ],
+                currentIndex: this.state.currentIndex + 1
               }));
-
-              if (this.state.currentIndex < data.results.length) {
-                this.setState(state => ({
-                  ...state,
-                  currentIndex: this.state.currentIndex + 1
-                }));
-              }
             }}></Button>
           <Button
             title="FALSE"
@@ -55,22 +57,11 @@ export default class Quiz extends React.Component {
               console.log({answeredQ});
               this.setState(state => ({
                 ...state,
-                answeredQ: [...state.answeredQ, answeredQ]
+                answeredQ: [...state.answeredQ, answeredQ],
+                currentIndex: this.state.currentIndex + 1
               }));
-
-              if (this.state.currentIndex < data.results.length) {
-                this.setState(state => ({
-                  ...state,
-                  currentIndex: this.state.currentIndex + 1
-                }));
-              }
             }}>
             <Text>FALSE</Text>
-          </Button>
-          <Button
-            title="RESULTS"
-            onPress={() => this.props.navigation.navigate("Results")}>
-            <Text>RESULTS</Text>
           </Button>
         </View>
       </View>
